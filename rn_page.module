@@ -23,7 +23,6 @@ function rn_page_drupal_test_task(){
     array('data' => 'Edit link'),
   );  
   $rows = array();
-  $limit = 50;
 
   $query = db_select('users', 'u')
     ->fields('u', array('uid', 'name'))
