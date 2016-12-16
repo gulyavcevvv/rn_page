@@ -1,0 +1,43 @@
+<?php
+
+include_once 'rn_page.features.inc';
+
+/**
+ * Implements hook_menu().
+ */
+function rn_page_menu() {
+  $items['drupal-test-task'] = array(
+    'title' => 'drupal test task',
+    'page callback' => 'rn_page_drupal_test_task',
+    'access arguments' => array('access user profiles'),
+    'type' => MENU_NORMAL_ITEM,   
+  );
+  return $items;
+}  
+
+
+function rn_page_drupal_test_task(){
+  $header = array(
+    array('data' => 'Uid',        'field' => 'uid', 'sort' => 'ASC'),
+    array('data' => 'Username',   'field' => 'name'),
+    array('data' => 'Edit link'),
+  );  
+  $rows = array();
+  $limit = 50;
+
+  $query = db_select('users', 'u')
+    ->fields('u', array('uid', 'name'))
+    ->extend('TableSort')
+    ->orderByHeader($header)
+    ->orderBy('uid', 'ASC')
+    ->range(1, 50);
+  
+  $result = $query->execute();
+  foreach ($result as $result_user) {
+    $rows[] = array($result_user->uid,
+                    l($result_user->name, 'user/'. $result_user->uid),
+                    l('Edit', 'user/'. $result_user->uid .'/edit'),
+                   );
+   }
+  return theme('table', array('header' => $header, 'rows' => $rows));	
+}
